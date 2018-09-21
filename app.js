@@ -3,6 +3,8 @@ const morgan = require('morgan');
 const router = require('./routes/index.js');
 const wiki = require('./routes/wiki.js');
 const user = require('./routes/user.js');
+const parser = require('body-parser');
+const index = require('./routes/index.js');
 
 require('html-template-tag');
 const {
@@ -15,6 +17,9 @@ const {
 const app = express();
 
 //middleware
+app.use(parser.json());
+app.use(parser.urlencoded({extended: true}));
+
 app.use(express.urlencoded({
   extended: false
 }));
@@ -25,6 +30,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.use('/wiki', wiki);
 app.use('/users', user);
+app.use('/', index);
 
 db.authenticate().
 then(() => {
@@ -36,10 +42,10 @@ const port = 3000;
 
 const init = async () => {
   await User.sync({
-    force: true
+    // force: true
   });
   await Page.sync({
-    force: true
+    // force: true
   });
 
   app.listen(port, () => {
